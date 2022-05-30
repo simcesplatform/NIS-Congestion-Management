@@ -1,0 +1,6 @@
+# The component manifest file for the NIS component
+
+Name: NIS
+Type: platform
+Description: "Network information system (NIS) component for the SimCES Platform"
+DockerImage: ghcr.io/mehdiattar-lab/network-information-system
