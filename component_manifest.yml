@@ -4,3 +4,6 @@ Name: NIS
 Type: platform
 Description: "Network information system (NIS) component for the SimCES Platform"
 DockerImage: ghcr.io/mehdiattar-lab/network-information-system
+    NIS-File:
+        Environment: NIS_JSON_FILE
+        Optional: false

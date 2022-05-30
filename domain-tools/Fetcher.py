@@ -61,7 +61,7 @@ class JsonFileNIS():
     Class for getting the network information data from a JSON file.
     '''
 
-    def __init__(self, file_name: str, delimiter: str = ","):
+    def __init__(self, file_name: str):
         '''
         Create object which uses the given json file that uses the given delimiter.
         Raises JsonFileError if file cannot be read e.g. file not found, or it is missing required attributes.

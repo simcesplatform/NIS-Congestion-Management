@@ -217,8 +217,7 @@ def create_component() -> NIS:
 
     # The cast function here is only used to help Python linters like pyright to recognize the proper type.
 
-    json_file = environment_variables[NIS_JSON_FILE]
-    NISDataPython = JsonFileNIS.__init__(json_file)
+    NISDataPython = JsonFileNIS(environment_variables[NIS_JSON_FILE])
     NISComponentDataJson = json.dumps(NISDataPython[1])
     NISBusDataJson = json.dumps(NISDataPython[2])
 
