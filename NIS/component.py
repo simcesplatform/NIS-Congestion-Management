@@ -132,11 +132,12 @@ def create_component() -> NIS:         # Factory function. making instance of th
     """
     Creates and returns a NIS Component based on the environment variables.
     """
-    FileName = load_environmental_variables(
+    env_variables = load_environmental_variables(
         (NIS_JSON_FILE, str, None )
     )
-    component_content, bus_content = JsonFileNIS(FileName[NIS_JSON_FILE])
-    return NIS(component_data,bus_data)    # the birth of the NIS object
+    json_file = JsonFileNIS(env_variables[NIS_JSON_FILE])
+    component_content, bus_content = json_file.get_data()
+    return NIS(component_content, bus_content)    # the birth of the NIS object
 
 
 async def start_component():

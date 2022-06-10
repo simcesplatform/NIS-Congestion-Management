@@ -44,6 +44,23 @@ class JsonFileNIS():
     '''
     Class for getting the network information data from a JSON file.
     '''
+    COMPONENT_KEYS = set(
+        'PowerBase',
+        'DeviceId',
+        'SendingEndBus',
+        'ReceivingEndBus',
+        'Resistance',
+        'Reactance',
+        'ShuntAdmittance',
+        'ShuntConductance',
+        'RatedCurrent'
+    )
+    BUS_KEYS = set(
+        'BusName',
+        'BusType',
+        'BusVoltageBase'
+    )
+    REQUIRED_FIELDS = COMPONENT_KEYS + BUS_KEYS
 
     def __init__(self, file_name: str):
         '''
@@ -58,24 +75,20 @@ class JsonFileNIS():
             raise JsonFileError(f'Unable to read json file {file_name}: {str( e )}.')
 
         self._pythonComponent = json.load(self._file)
+
         # check that self._json.keys has required attributes
-        required_fields = set(['PowerBase', 'DeviceId', 'SendingEndBus' ,\
-             'ReceivingEndBus' , 'Resistance' , 'Reactance' ,\
-             'ShuntAdmittance' , 'ShuntConductance' , 'RatedCurrent'\
-             'BusName' , 'BusType' , 'BusVoltageBase' ])
         fields = set(self._pythonComponent.keys())           # .keys are attributes of the json file
         # missing contains fields that do not exist or is empty if all fields exist.
-        missing = required_fields.difference(fields)
+        missing = JsonFileNIS.REQUIRED_FIELDS.difference(fields)
         if len(missing) > 0:
             raise JsonFileError(f'Resource state source json file missing required attribute: {",".join( missing )}.')
-        component_keys = ['PowerBase', 'DeviceId', 'SendingEndBus' ,\
-             'ReceivingEndBus' , 'Resistance' , 'Reactance' ,\
-             'ShuntAdmittance' , 'ShuntConductance' , 'RatedCurrent']
-        bus_keys = ['BusName' , 'BusType' , 'BusVoltageBase']
-        
-        component_content = {key: self._pythonComponent[key] for key in component_keys}
-        bus_content = {key: self._pythonComponent[key] for key in bus_keys}
-        return component_content, bus_content  
+
+        self._component_content = {key: self._pythonComponent[key] for key in JsonFileNIS.COMPONENT_KEYS}
+        self._bus_content = {key: self._pythonComponent[key] for key in JsonFileNIS.BUS_KEYS}
+
+    def get_data(self):
+        '''Return the data parsed from the JSON file.'''
+        return self._component_content, self._bus_content
 
     def __del__(self):
         '''
