@@ -11,11 +11,11 @@ Module containing the message class for NIS Bus information.
 """
 
 from __future__ import annotations
-from typing import Any, Dict, Optional, List, Union
+from typing import Any, Dict, List, Union
 
-from tools.exceptions.messages import MessageError, MessageValueError
+from tools.exceptions.messages import MessageValueError
 from tools.messages import AbstractResultMessage
-from tools.message.block import QuantityBlock, QuantityArrayBlock, TimeSeriesBlock, ValueArrayBlock
+from tools.message.block import QuantityArrayBlock
 from tools.tools import FullLogger
 
 LOGGER = FullLogger(__name__)
@@ -26,6 +26,10 @@ class NISBusMessage(AbstractResultMessage):
 
     CLASS_MESSAGE_TYPE = "Init.NIS.NetworkBusInfo"
     MESSAGE_TYPE_CHECK = True
+
+    BusVoltageBase = "BusVoltageBase"
+    BusName = "BusName"
+    BusType = "BusType"
 
     # all attributes specific that are added to the AbstractResult should be introduced here
     MESSAGE_ATTRIBUTES = {
@@ -94,7 +98,7 @@ class NISBusMessage(AbstractResultMessage):
             self.__bus_name=bus_name
             return
         raise MessageValueError("'{:s}' is an invalid value for BusName".format(bus_name))
-        
+
     @classmethod
     def _check_bus_name(cls, bus_name: List[str]) -> bool:
         if isinstance(bus_name, list):
@@ -104,18 +108,20 @@ class NISBusMessage(AbstractResultMessage):
 
     ######################
     @property
-    def Bus_type(self) -> List[str]:
-        return self.__Bus_type
+    def bus_type(self) -> List[str]:
+        return self.__bus_type
 
-    @bus_name.setter
+    @bus_type.setter
     def bus_type(self, bus_type: List[str]):
         if self._check_bus_type(bus_type):
-            self.__Bus_type=bus_type
+            self.__bus_type=bus_type
         else:
             raise MessageValueError("Invalid value, {}, for attribute: bus_type".format(bus_type))
-    
+
     @classmethod
     def _check_bus_type(cls, bus_type: List[str]) -> bool:
+        if not isinstance(bus_type, list):
+            return False
         dummy_num=bus_type.count("dummy")
         usage_point_num=bus_type.count("usage-point")
         root_num=bus_type.count("root")
@@ -124,7 +130,6 @@ class NISBusMessage(AbstractResultMessage):
             return True
         else:
             return False
+
+
 NISBusMessage.register_to_factory()
-
-
-
