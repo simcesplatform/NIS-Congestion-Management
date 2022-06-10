@@ -44,7 +44,7 @@ class JsonFileNIS():
     '''
     Class for getting the network information data from a JSON file.
     '''
-    COMPONENT_KEYS = set(
+    COMPONENT_KEYS = {
         'PowerBase',
         'DeviceId',
         'SendingEndBus',
@@ -54,13 +54,13 @@ class JsonFileNIS():
         'ShuntAdmittance',
         'ShuntConductance',
         'RatedCurrent'
-    )
-    BUS_KEYS = set(
+    }
+    BUS_KEYS = {
         'BusName',
         'BusType',
         'BusVoltageBase'
-    )
-    REQUIRED_FIELDS = COMPONENT_KEYS + BUS_KEYS
+    }
+    REQUIRED_FIELDS = COMPONENT_KEYS.union(BUS_KEYS)
 
     def __init__(self, file_name: str):
         '''
