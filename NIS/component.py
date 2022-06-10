@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 # Copyright 2021 Tampere University and VTT Technical Research Centre of Finland
 # This software was developed as a part of the ProCemPlus project: https://www.senecc.fi/projects/procemplus
-# This software was developed as a part of EU project INTERRFCE: http://www.interrface.eu/.
+# This software was developed as a part of EU project INTERRFACE: http://www.interrface.eu/.
 #  This source code is licensed under the MIT license. See LICENSE in the repository root directory.
 # Author(s): Mehdi Attar <mehdi.attar@tuni.fi>
 #            Ville Heikkilä <ville.heikkila@tuni.fi>
 
 
 import asyncio
-import json
-from multiprocessing import _BoundedSemaphoreType
-from typing import Any, cast, Set, Union
+# import json
+# from multiprocessing import _BoundedSemaphoreType
+# from typing import Any, cast, Set, Union
 
 from tools.components import AbstractSimulationComponent
 from tools.exceptions.messages import MessageError
-from tools.messages import BaseMessage
+# from tools.messages import BaseMessage
 from tools.tools import FullLogger, load_environmental_variables
 
 from Fetcher import JsonFileNIS
@@ -22,7 +22,7 @@ from Fetcher import JsonFileNIS
 
 # import all the required messages from installed libraries
 from NIS.NISBusMessage import NISBusMessage
-from NIS.NISComponentMessage import NISComponentMessage 
+from NIS.NISComponentMessage import NISComponentMessage
 
 # initialize logging object for the module
 LOGGER = FullLogger(__name__)
@@ -38,21 +38,21 @@ TIMEOUT = 2.0
 NIS_JSON_FILE = "NIS_JSON_FILE"
 
 
-class NIS(AbstractSimulationComponent): # the NIS class inherits from AbstractSimulationComponent class 
+class NIS(AbstractSimulationComponent): # the NIS class inherits from AbstractSimulationComponent class
     """
-    The NIS component is initialized in the beggining of the simulation by the platform manager.
+    The NIS component is initialized in the beginning of the simulation by the platform manager.
     NIS gets its input data (NIS data) from the json file containing the bus and component data.
-    the JSON structure for bus data is availble:
+    the JSON structure for bus data is available:
     https://simcesplatform.github.io/energy_msg-init-nis-networkbusinfo/
-    The JSON structure for component data is availbel :
-    https://simcesplatform.github.io/energy_msg-init-nis-networkcomponentinfo/ 
+    The JSON structure for component data is available :
+    https://simcesplatform.github.io/energy_msg-init-nis-networkcomponentinfo/
     """
 
     # Constructor
     def __init__(
             self,
-            component_data: dict  ,
-            bus_data: dict ):
+            component_data: dict,
+            bus_data: dict):
         """
         The NIS component is initiated in the beginning of the simulation by the simulation manager
         and in every epoch, it publishes the NIS data. The NIS data is fetched from a class data called Fetcher.
@@ -87,7 +87,7 @@ class NIS(AbstractSimulationComponent): # the NIS class inherits from AbstractSi
         This also indicated that the component is ready to send a Status Ready message to the Simulation Manager.
         """
         # send the output message
-        await asyncio.sleep(self._output_delay)
+        # await asyncio.sleep(self._output_delay)
 
         simple_message = self._message_generator.get_message(
             NISBusMessage,
@@ -118,8 +118,8 @@ class NIS(AbstractSimulationComponent): # the NIS class inherits from AbstractSi
 
     #async def general_message_handler(self, message_object: Union[BaseMessage, Any],
     #                                  message_routing_key: str) -> None:
-        # the NIS component doesnot need to listen to any topic except SimState and Epoch.
-        # Epoch and SimState messages are listened torough the parent class.
+        # the NIS component does not need to listen to any topic except SimState and Epoch.
+        # Epoch and SimState messages are listened through the parent class.
     #    pass
 
     async def _send_simple_message(self,MessageContent,Topic):
