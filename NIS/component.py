@@ -89,29 +89,48 @@ class NIS(AbstractSimulationComponent): # the NIS class inherits from AbstractSi
         # send the output message
         # await asyncio.sleep(self._output_delay)
 
-        simple_message = self._message_generator.get_message(
-            NISBusMessage,
-            EpochNumber=self._latest_epoch,
-            TriggeringMessageIds=self._triggering_message_ids,
-            BusName={key: self._bus_data[key] for key in ["BusName"]}
-            BusType={key: self._bus_data[key] for key in ["BusType"]}
-            BusVoltageBase={key: self._bus_data[key] for key in ["BusVoltageBase"]})
+        # create and send NISBusMessage
+        try:
+            bus_message = self._message_generator.get_message(
+                NISBusMessage,
+                EpochNumber=self._latest_epoch,
+                TriggeringMessageIds=self._triggering_message_ids,
+                BusName={key: self._bus_data[key] for key in ["BusName"]},
+                BusType={key: self._bus_data[key] for key in ["BusType"]},
+                BusVoltageBase={key: self._bus_data[key] for key in ["BusVoltageBase"]}
+            )
+        except (ValueError, TypeError, MessageError) as message_error:
+            # When there is an exception while creating the message, it is in most cases a serious error.
+            LOGGER.error(f"{type(message_error).__name__}: {message_error}")
+            await self.send_error_message("Internal error when creating bus message.")
+            return False
 
-        await self._send_simple_message(simple_message,self.BusDataTopic)
-        simple_message = self._message_generator.get_message(
-            NISComponentMessage,
-            EpochNumber=self._latest_epoch,
-            TriggeringMessageIds=self._triggering_message_ids,
-            PowerBase={key: self._component_data[key] for key in ["PowerBase"]}
-            SendingEndBus={key: self._component_data[key] for key in ["SendingEndBus"]}
-            ReceivingEndBus={key: self._component_data[key] for key in ["ReceivingEndBus"]}
-            DeviceId={key: self._component_data[key] for key in ["DeviceId"]}
-            Resistance={key: self._component_data[key] for key in ["Resistance"]}
-            Reactance={key: self._component_data[key] for key in ["Reactance"]}
-            ShuntAdmittance={key: self._component_data[key] for key in ["ShuntAdmittance"]}
-            ShuntConductance={key: self._component_data[key] for key in ["ShuntConductance"]}
-            RatedCurrent={key: self._component_data[key] for key in ["RatedCurrent"]}
-            await self._send_simple_message(simple_message,self.ComponentDataTopic)
+        await self._send_message(bus_message, self.BusDataTopic)
+
+        # create and send NISComponentMessage
+        try:
+            component_message = self._message_generator.get_message(
+                NISComponentMessage,
+                EpochNumber=self._latest_epoch,
+                TriggeringMessageIds=self._triggering_message_ids,
+                PowerBase={key: self._component_data[key] for key in ["PowerBase"]},
+                SendingEndBus={key: self._component_data[key] for key in ["SendingEndBus"]},
+                ReceivingEndBus={key: self._component_data[key] for key in ["ReceivingEndBus"]},
+                DeviceId={key: self._component_data[key] for key in ["DeviceId"]},
+                Resistance={key: self._component_data[key] for key in ["Resistance"]},
+                Reactance={key: self._component_data[key] for key in ["Reactance"]},
+                ShuntAdmittance={key: self._component_data[key] for key in ["ShuntAdmittance"]},
+                ShuntConductance={key: self._component_data[key] for key in ["ShuntConductance"]},
+                RatedCurrent={key: self._component_data[key] for key in ["RatedCurrent"]}
+            )
+        except (ValueError, TypeError, MessageError) as message_error:
+            # When there is an exception while creating the message, it is in most cases a serious error.
+            LOGGER.error(f"{type(message_error).__name__}: {message_error}")
+            await self.send_error_message("Internal error when creating component message.")
+            return False
+
+        await self._send_message(component_message, self.ComponentDataTopic)
+
         # return True to indicate that the component is finished with the current epoch
         return True
 
@@ -122,7 +141,7 @@ class NIS(AbstractSimulationComponent): # the NIS class inherits from AbstractSi
         # Epoch and SimState messages are listened through the parent class.
     #    pass
 
-    async def _send_simple_message(self,MessageContent,Topic):
+    async def _send_message(self, MessageContent, Topic):
         await self._rabbitmq_client.send_message(
             topic_name=Topic,
             message_bytes=MessageContent.bytes())
