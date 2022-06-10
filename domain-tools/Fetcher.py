@@ -9,30 +9,30 @@
 Contains classes related to reading the NIS data from a JSON file.
 '''
 
-from dataclasses import dataclass
+# from dataclasses import dataclass
 
 # import csv
 import json
 
 
-@dataclass
-class ResourceState():
-    '''
-    Represents required attributes read from the json file.
-    '''
+# @dataclass
+# class ResourceState():
+#     '''
+#     Represents required attributes read from the json file.
+#     '''
 
-    PowerBase: dict
-    DeviceId: list
-    SendingEndBus: list
-    ReceivingEndBus: list
-    Resistance: dict
-    Reactance: dict
-    ShuntAdmittance: dict
-    ShuntConductance: dict
-    RatedCurrent: dict
-    BusName: list
-    BusType: list
-    BusVoltageBase: dict
+#     PowerBase: dict
+#     DeviceId: list
+#     SendingEndBus: list
+#     ReceivingEndBus: list
+#     Resistance: dict
+#     Reactance: dict
+#     ShuntAdmittance: dict
+#     ShuntConductance: dict
+#     RatedCurrent: dict
+#     BusName: list
+#     BusType: list
+#     BusVoltageBase: dict
 
 class JsonFileError(Exception):
     '''
