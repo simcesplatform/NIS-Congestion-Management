@@ -11,11 +11,11 @@ Module containing the message class for NIS Component information.
 """
 
 from __future__ import annotations
-from typing import Any, Dict, Optional, List, Union
+from typing import Any, Dict, List, Union
 
-from tools.exceptions.messages import MessageError, MessageValueError
+from tools.exceptions.messages import MessageValueError
 from tools.messages import AbstractResultMessage
-from tools.message.block import QuantityBlock, QuantityArrayBlock, TimeSeriesBlock, ValueArrayBlock
+from tools.message.block import QuantityBlock, QuantityArrayBlock
 from tools.tools import FullLogger
 
 LOGGER = FullLogger(__name__)
@@ -26,13 +26,23 @@ class NISComponentMessage(AbstractResultMessage):
     CLASS_MESSAGE_TYPE = "Init.NIS.NetworkComponentInfo"
     MESSAGE_TYPE_CHECK = True
 
+    Resistance ="Resistance"
+    Reactance = "Reactance"
+    ShuntAdmittance = "ShuntAdmittance"
+    ShuntConductance = "ShuntConductance"
+    RatedCurrent = "RatedCurrent"
+    SendingEndBus = "SendingEndBus"
+    ReceivingEndBus = "ReceivingEndBus"
+    DeviceId = "DeviceId"
+    PowerBase = "PowerBase"
+
     # all attributes specific that are added to the AbstractResult should be introduced here
     MESSAGE_ATTRIBUTES = {
         Resistance : "resistance",
         Reactance : "reactance",
         ShuntAdmittance : "shunt_admittance",
         ShuntConductance : "shunt_conductance",
-        RatedCurrent : "rated_current", 
+        RatedCurrent : "rated_current",
         SendingEndBus : "sending_end_bus",
         ReceivingEndBus : "receiving_end_bus",
         DeviceId : "device_Id",
@@ -86,10 +96,10 @@ class NISComponentMessage(AbstractResultMessage):
             self._set_quantity_array_block_value(self.Resistance, resistance)
         else:
             raise MessageValueError("Invalid value, {}, for attribute: Resistance ".format(resistance))
-    
+
     @classmethod
     def _check_resistance(cls, resistance: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
-        return cls._check_resistance(
+        return cls._check_quantity_array_block(
             value=resistance,
             unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.Resistance])
 
@@ -105,13 +115,13 @@ class NISComponentMessage(AbstractResultMessage):
             self._set_quantity_array_block_value(self.Reactance, reactance)
         else:
             raise MessageValueError("Invalid value, {}, for attribute: Reactance ".format(reactance))
-    
+
     @classmethod
     def _check_reactance(cls, reactance: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
-        return cls._check_reactance(
+        return cls._check_quantity_array_block(
             value=reactance,
             unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.Reactance])
-    
+
     #######
 
     @property
@@ -128,12 +138,12 @@ class NISComponentMessage(AbstractResultMessage):
 
     @classmethod
     def _check_shunt_admittance(cls, shunt_admittance: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
-        return cls._check_shunt_admittance(
+        return cls._check_quantity_array_block(
             value=shunt_admittance,
             unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.ShuntAdmittance])
 
     #######
-    
+
     @property
     def shunt_conductance(self) -> QuantityArrayBlock:
         """The value of the ShuntConductance attribute."""
@@ -148,7 +158,7 @@ class NISComponentMessage(AbstractResultMessage):
 
     @classmethod
     def _check_shunt_conductance(cls, shunt_conductance: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
-        return cls._check_shunt_conductance(
+        return cls._check_quantity_array_block(
             value=shunt_conductance,
             unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.ShuntConductance])
 
@@ -165,15 +175,15 @@ class NISComponentMessage(AbstractResultMessage):
             self._set_quantity_array_block_value(self.RatedCurrent, rated_current)
         else:
             raise MessageValueError("Invalid value, {}, for attribute:RatedCurrent ".format(rated_current))
-    
+
     @classmethod
     def _check_rated_current(cls, rated_current: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
-        return cls._check_rated_current(
+        return cls._check_quantity_array_block(
             value=rated_current,
             unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.RatedCurrent])
 
     ########
-    
+
     @property
     def device_id(self) -> List[str]:
         """The value of the DeviceIdArray attribute."""
@@ -182,15 +192,13 @@ class NISComponentMessage(AbstractResultMessage):
     @device_id.setter
     def device_id(self, device_id: List[str]):
         if self._check_device_id(device_id):
-            self._set_quantity_array_block_value(self.DeviceId, device_id)
+            self.__device_id = device_id
         else:
             raise MessageValueError("Invalid value, {}, for attribute:DeviceId ".format(device_id))
 
     @classmethod
     def _check_device_id(cls, device_id:List[str]) -> bool:
-        return cls._check_device_id(
-            value=device_id,
-            unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.DeviceId])
+        return isinstance(device_id, list)
 
     ########
 
@@ -202,15 +210,13 @@ class NISComponentMessage(AbstractResultMessage):
     @sending_end_bus.setter
     def sending_end_bus(self, sending_end_bus:List[str]):
         if self._check_sending_end_bus(sending_end_bus):
-            self._set_quantity_array_block_value(self.SendingEndBus, sending_end_bus)
+            self.__sending_end_bus = sending_end_bus
         else:
             raise MessageValueError("Invalid value, {}, for attribute:SendingEndBus ".format(sending_end_bus))
 
     @classmethod
     def _check_sending_end_bus(cls, sending_end_bus: List[str]) -> bool:
-        return cls._check_sending_end_bus(
-            value=sending_end_bus,
-            unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.SendingEndBus])
+        return isinstance(sending_end_bus, list)
 
     ########
 
@@ -222,15 +228,13 @@ class NISComponentMessage(AbstractResultMessage):
     @receiving_end_bus.setter
     def receiving_end_bus(self, receiving_end_bus: List[str]):
         if self._check_receiving_end_bus(receiving_end_bus):
-            self._set_quantity_array_block_value(self.ReceivingEndBus, receiving_end_bus)
+            self.__receiving_end_bus = receiving_end_bus
         else:
             raise MessageValueError("Invalid value, {}, for attribute:ReceivingEndBus ".format(receiving_end_bus))
 
     @classmethod
     def _check_receiving_end_bus(cls, receiving_end_bus:List[str]) -> bool:
-        return cls._check_receiving_end_bus(
-            value=receiving_end_bus,
-            unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.ReceivingEndBus])
+        return isinstance(receiving_end_bus, list)
 
     #########
 
@@ -245,11 +249,11 @@ class NISComponentMessage(AbstractResultMessage):
             self._set_quantity_block_value(self.PowerBase, power_base)
         else:
             raise MessageValueError("Invalid value, {}, for attribute: POWER_BASE_ATTRIBUTE ".format(power_base))
-    
+
     @classmethod
     def _check_power_base(cls, power_base: Union[QuantityBlock, Dict[str, Any]]) -> bool:
-        return cls._check_power_base(
+        return cls._check_quantity_block(
             value=power_base,
-            unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.PowerBase])
+            unit=cls.QUANTITY_BLOCK_ATTRIBUTES[cls.PowerBase])
 
 NISComponentMessage.register_to_factory()
