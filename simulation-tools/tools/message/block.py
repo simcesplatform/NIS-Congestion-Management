@@ -183,13 +183,19 @@ class ValueArrayBlock:
         if not values:  # accept empty list
             return True
 
-        value_type = type(values[0])
-        if value_type not in cls.ALLOWED_VALUE_TYPES:  # check that the first value is a valid type
-            return False
+        #value_type = type(values[0])
+        #if value_type not in cls.ALLOWED_VALUE_TYPES:  # check that the first value is a valid type
+        #    return False
 
+        #for value in values:
+        #    # Check that all the values in the list are of the same type.
+        #    if not isinstance(value, value_type):
+        #        return False
+        #return True
+        ALLOWED_TYPES=(int, float, str, bool)
         for value in values:
             # Check that all the values in the list are of the same type.
-            if not isinstance(value, value_type):
+            if not isinstance(value, ALLOWED_TYPES):
                 return False
         return True
 

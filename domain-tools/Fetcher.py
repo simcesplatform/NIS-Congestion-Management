@@ -13,6 +13,10 @@ Contains classes related to reading the NIS data from a JSON file.
 
 # import csv
 import json
+from tools.tools import FullLogger
+
+
+LOGGER = FullLogger(__name__)
 
 
 # @dataclass
@@ -67,6 +71,7 @@ class JsonFileNIS():
         Create object which uses the given json file that uses the given delimiter.
         Raises JsonFileError if file cannot be read e.g. file not found, or it is missing required attributes.
         '''
+        #LOGGER.warning("beginning of the file opener")
         self._file = None  # required if there is no file and the __del__ method is executed
         try:
             self._file = open(file_name, newline="", encoding="utf-8")
@@ -74,7 +79,11 @@ class JsonFileNIS():
         except Exception as e:
             raise JsonFileError(f'Unable to read json file {file_name}: {str( e )}.')
 
-        self._pythonComponent = json.load(self._file)
+        #LOGGER.warning("after openning the json file")
+        try:
+            self._pythonComponent = json.load(self._file)
+        except Exception as e:
+            LOGGER.error(f"error of the json loading{e} - {file_name}")
 
         # check that self._json.keys has required attributes
         fields = set(self._pythonComponent.keys())           # .keys are attributes of the json file
@@ -82,7 +91,6 @@ class JsonFileNIS():
         missing = JsonFileNIS.REQUIRED_FIELDS.difference(fields)
         if len(missing) > 0:
             raise JsonFileError(f'Resource state source json file missing required attribute: {",".join( missing )}.')
-
         self._component_content = {key: self._pythonComponent[key] for key in JsonFileNIS.COMPONENT_KEYS}
         self._bus_content = {key: self._pythonComponent[key] for key in JsonFileNIS.BUS_KEYS}
 

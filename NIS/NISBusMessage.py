@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Union
 
 from tools.exceptions.messages import MessageValueError
 from tools.messages import AbstractResultMessage
-from tools.message.block import QuantityArrayBlock
+from tools.message.block import QuantityArrayBlock, ValueArrayBlock
 from tools.tools import FullLogger
 
 LOGGER = FullLogger(__name__)
@@ -71,24 +71,6 @@ class NISBusMessage(AbstractResultMessage):
     )
     ######################
     @property
-    def bus_voltage_base(self) -> QuantityArrayBlock:
-        return self.__bus_voltage_base
-
-    @bus_voltage_base.setter
-    def bus_voltage_base(self, bus_voltage_base: Union[QuantityArrayBlock, Dict[str, Any]]):
-        if self._check_bus_voltage_base(bus_voltage_base):
-            self._set_quantity_array_block_value(self.BusVoltageBase, bus_voltage_base)
-        else:
-            raise MessageValueError("Invalid value, {}, for attribute: bus_voltage_base".format(bus_voltage_base))
-
-    @classmethod
-    def _check_bus_voltage_base(cls, bus_voltage_base: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
-        return cls._check_quantity_array_block(
-            value=bus_voltage_base,
-            unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.BusVoltageBase]
-        )
-    ######################
-    @property
     def bus_name(self) -> List[str]:
         return self.__bus_name
 
@@ -130,6 +112,26 @@ class NISBusMessage(AbstractResultMessage):
             return True
         else:
             return False
+
+    ######################
+    @property
+    def bus_voltage_base(self) -> QuantityArrayBlock:
+        return self.__bus_voltage_base
+
+    @bus_voltage_base.setter
+    def bus_voltage_base(self, bus_voltage_base: Union[QuantityArrayBlock, Dict[str, Any]]):
+        if self._check_bus_voltage_base(bus_voltage_base):
+            self._set_quantity_array_block_value(self.BusVoltageBase, bus_voltage_base)
+        else:
+            raise MessageValueError("Invalid value, {}, for attribute: bus_voltage_base".format(bus_voltage_base))
+
+    @classmethod
+    def _check_bus_voltage_base(cls, bus_voltage_base: Union[List[float], QuantityArrayBlock, Dict[str, Any]]) -> bool:
+        return cls._check_quantity_array_block(
+            value=bus_voltage_base,
+            unit=cls.QUANTITY_ARRAY_BLOCK_ATTRIBUTES[cls.BusVoltageBase]
+        )
+
 
 
 NISBusMessage.register_to_factory()

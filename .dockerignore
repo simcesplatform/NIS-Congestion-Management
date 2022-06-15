@@ -1,1 +1,5 @@
 **/new_folder
+**/__pycache__
+**/.git
+.vscode
+python_libraries.env
