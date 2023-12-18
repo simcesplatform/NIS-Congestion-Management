@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 Tampere University and VTT Technical Research Centre of Finland
-# This software was developed as a part of the ProCemPlus project: https://www.senecc.fi/projects/procemplus
-# This software was developed as a part of EU project INTERRFACE: http://www.interrface.eu/.
+# Copyright 2023 Tampere University
+# This software was developed as a part of doctroal studies of Mehdi Attar, funded by Fortum and Neste Foundation.
 #  This source code is licensed under the MIT license. See LICENSE in the repository root directory.
 # Author(s): Mehdi Attar <mehdi.attar@tuni.fi>
-#            Ville Heikkilä <ville.heikkila@tuni.fi>
+#            software template: Ville Heikkilä <ville.heikkila@tuni.fi>
 
 
 import asyncio

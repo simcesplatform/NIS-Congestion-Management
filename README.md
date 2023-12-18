@@ -31,7 +31,7 @@ pip install -r requirements.txt
 
 In beginning of the simulation the NIS component will wait for [SimState](https://simcesplatform.github.io/core_msg-simstate/)(running) message, when the message is received component will initialize and send [Status](https://simcesplatform.github.io/core_msg-status/)(Ready) message with epoch number 0. If SimState(stopped) is received component will close down. Other message are ignored at this stage.
 
-After startup component will begin to listen for [epoch](https://simcesplatform.github.io/core_msg-epoch/) messages. In the current implementation, it only published the network information data in the epoch 1. For other epoches other than 1, it only sends ready message when epoch starts.
+After startup component will begin to listen for [epoch](https://simcesplatform.github.io/core_msg-epoch/) messages. In the current implementation, it only publishes the network information data in the epoch 1. For other epoches other than 1, it only sends ready message when epoch starts.
 
 If at any stage of the execution Status (Error) message is received component will immediately close down
 
